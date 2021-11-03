@@ -13,8 +13,8 @@ class PH_PoseHelper(bpy.types.Panel):
         scene = context.scene
 
         # layout.label(text="Hello Pose Helper!")
-        layout.prop(scene, "anamnesis_armature")
-        layout.operator("pose.load_ana_pose")
+        layout.prop(scene, "anamnesis_armature", text="Armature")
+        layout.operator("pose.load_ana_pose", text="Import")
 
 class PH_Import(bpy.types.Panel):
     bl_idname = "PH_PT_Import"

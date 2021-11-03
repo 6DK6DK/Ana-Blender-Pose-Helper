@@ -13,6 +13,10 @@ class LoadAnaPose(bpy.types.Operator):
         default='*.pose',
         options={'HIDDEN'}
     )
+
+    @classmethod
+    def poll(cls, context):
+        return context.scene.anamnesis_armature is not None
     
     def execute(self, context):
         arm = context.scene.anamnesis_armature.pose

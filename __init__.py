@@ -1,7 +1,7 @@
 bl_info = {
     'name': 'Pose Helper BETA',
     'category': 'All',
-    'version': (0, 0, 1),
+    'version': (1, 0, 0),
     'blender': (2, 93, 1)
 }
 

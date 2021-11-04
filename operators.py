@@ -1,5 +1,6 @@
 import bpy
 import json
+from os import path
 from mathutils import *
 
 class LoadAnaPose(bpy.types.Operator):
@@ -41,7 +42,8 @@ class LoadAnaBone(bpy.types.Operator):
     def execute(self, context):
         arm = context.scene.anamnesis_armature.pose
 
-        with open(bpy.utils.script_path_user() + '\\addons\\Pose_Helper\\map.json', 'r') as f:
+        # with open(bpy.utils.script_path_user() + '\\addons\\Pose_Helper\\map.json', 'r') as f:
+        with open(path.join(path.dirname(__file__), 'map.json'), 'r') as f:
             name_map = json.load(f)
 
         with open(self.path, 'r') as f:

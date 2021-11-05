@@ -63,7 +63,7 @@ class LoadAnaBone(bpy.types.Operator):
             rot = Quaternion(rot)
          
             # key blender function for transforming from the character's space to the bone's space relative to rest.
-            bone.rotation_quaternion = context.object.convert_space(pose_bone = bone, matrix = rot.to_matrix().to_4x4(), from_space = 'POSE', to_space = 'LOCAL').to_quaternion()
+            bone.rotation_quaternion = context.scene.anamnesis_armature.convert_space(pose_bone = bone, matrix = rot.to_matrix().to_4x4(), from_space = 'POSE', to_space = 'LOCAL').to_quaternion()
         
         return {'FINISHED'}
 

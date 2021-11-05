@@ -6,7 +6,7 @@ from mathutils import *
 class LoadAnaPose(bpy.types.Operator):
     """Load an Anamnesis .pose file to the current armature"""
     bl_idname = "pose.load_ana_pose"
-    bl_label = "Load Anamnesis Pose"
+    bl_label = "Import"
     bl_options = {'REGISTER', 'UNDO'}
 
     filepath: bpy.props.StringProperty(subtype="FILE_PATH")

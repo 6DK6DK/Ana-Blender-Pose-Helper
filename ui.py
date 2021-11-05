@@ -1,5 +1,6 @@
 import bpy
 
+# everything meaningful currently lives in this class, the two subpanels are commented out of register(). It may be useful to turn them into their own panels if they get enough content to be worth collapsing.
 class PH_PoseHelper(bpy.types.Panel):
     bl_idname = "PH_PT_PoseHelper"
     bl_label = "Pose Helper"
@@ -16,6 +17,7 @@ class PH_PoseHelper(bpy.types.Panel):
         layout.prop(scene, "anamnesis_armature", text="Armature")
         layout.operator("pose.load_ana_pose", text="Import")
 
+# UNUSED
 class PH_Import(bpy.types.Panel):
     bl_idname = "PH_PT_Import"
     bl_label = "Import"
@@ -32,6 +34,7 @@ class PH_Import(bpy.types.Panel):
 
         # column.prop(scene, "armature")
 
+# UNUSED
 class PH_Export(bpy.types.Panel):
     bl_idname = "PH_PT_Export"
     bl_label = "Export"

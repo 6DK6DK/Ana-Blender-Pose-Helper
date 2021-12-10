@@ -45,18 +45,13 @@ class LoadAnaBone(bpy.types.Operator):
     def execute(self, context):
         arm = context.scene.anamnesis_armature.pose
 
-        # v1.0.1: old code for opening library file left in comment. I think the below will be more reliable, but I've used it less myself.
-        # with open(bpy.utils.script_path_user() + '\\addons\\Pose_Helper\\map.json', 'r') as f:
-        with open(path.join(path.dirname(__file__), 'map.json'), 'r') as f:
-            name_map = json.load(f)
-
         with open(self.path, 'r') as f:
             pose = json.load(f)['Bones']
         
         # !!! The meat.
         bone = arm.bones[self.bone]
-        if bone.name in name_map and name_map[bone.name] in pose:
-            rot = pose[name_map[bone.name]]["Rotation"].split(", ")
+        if bone.name in pose:
+            rot = pose[bone.name]["Rotation"].split(", ")
             rot = [float(x) for x in rot]
             # .pose is XYZW, we need to switch to WXYZ
             rot.insert(0, rot.pop())

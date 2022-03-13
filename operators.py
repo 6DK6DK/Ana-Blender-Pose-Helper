@@ -2,6 +2,7 @@ import bpy
 import json
 from os import path
 from mathutils import *
+from bpy_extras.io_utils import ExportHelper
 
 class LoadAnaPose(bpy.types.Operator):
     """Load an Anamnesis .pose file to the current armature"""
@@ -77,9 +78,56 @@ class LoadAnaBone(bpy.types.Operator):
         
         return {'FINISHED'}
 
+class ExportAnaPose(bpy.types.Operator, ExportHelper):
+    """Export an Anamnesis .pose file from the current armature's pose"""
+    bl_idname = "pose.export_ana_pose"
+    bl_label = "Export"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    filepath: bpy.props.StringProperty(subtype="FILE_PATH")
+    filename_ext='.pose'
+    filter_glob: bpy.props.StringProperty(
+        default='*.pose',
+        options={'HIDDEN'}
+    )
+
+    #don't enable the button if we don't have an armature set
+    @classmethod
+    def poll(cls, context):
+        return context.scene.anamnesis_armature is not None
+
+    def execute(self, context):
+        arm = context.scene.anamnesis_armature.pose
+
+        with open(self.filepath, 'w') as f:
+            json_dict = {
+                "FileExtension": ".pose",
+                "TypeName": "Anamnesis Pose",
+                "Bones": {}
+            }
+
+            for bone in arm.bones:
+                quat = bone.matrix.to_quaternion()
+                rot = "{0}, {1}, {2}, {3}".format(quat.x, quat.y, quat.z, quat.w)
+                bone_dict = {
+                    bone.name: {
+                        "Rotation": rot
+                    }
+                }
+                json_dict['Bones'].update(bone_dict)
+            
+            json.dump(json_dict, f)
+            return {'FINISHED'}
+
+    # def invoke(self, context, event):
+    #     bpy.context.window_manager.fileselect_add(self)
+    #     return {'RUNNING_MODAL'}
+            
+
 classes = [
     LoadAnaPose,
-    LoadAnaBone
+    LoadAnaBone,
+    ExportAnaPose
 ]
 
 def register():

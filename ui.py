@@ -15,6 +15,7 @@ class PH_PoseHelper(bpy.types.Panel):
 
         layout.prop(scene, "anamnesis_armature", text="Armature")
         layout.operator("pose.load_ana_pose", text="Import")
+        layout.operator("pose.export_ana_pose", text="Export")
 
 # UNUSED
 class PH_Import(bpy.types.Panel):

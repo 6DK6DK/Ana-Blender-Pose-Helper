@@ -107,6 +107,11 @@ class ExportAnaPose(bpy.types.Operator, ExportHelper):
     def execute(self, context):
         arm = context.scene.anamnesis_armature.pose
 
+        hara = arm.bones['n_hara'].matrix_basis
+        arm.bones['n_hara'].matrix_basis = Matrix()
+        diff = Quaternion([1,0,0,0]).rotation_difference(arm.bones['n_hara'].matrix.to_quaternion())
+        arm.bones['n_hara'].matrix_basis = hara
+
         with open(self.filepath, 'w') as f:
             json_dict = {
                 "FileExtension": ".pose",
@@ -115,7 +120,7 @@ class ExportAnaPose(bpy.types.Operator, ExportHelper):
             }
 
             for bone in arm.bones:
-                quat = bone.matrix.to_quaternion()
+                quat = bone.matrix.to_quaternion() @ diff
                 rot = "{0}, {1}, {2}, {3}".format(quat.x, quat.y, quat.z, quat.w)
                 bone_dict = {
                     bone.name: {
@@ -126,10 +131,6 @@ class ExportAnaPose(bpy.types.Operator, ExportHelper):
             
             json.dump(json_dict, f)
             return {'FINISHED'}
-
-    # def invoke(self, context, event):
-    #     bpy.context.window_manager.fileselect_add(self)
-    #     return {'RUNNING_MODAL'}
             
 
 classes = [

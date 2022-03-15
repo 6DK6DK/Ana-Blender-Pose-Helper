@@ -23,8 +23,16 @@ class LoadAnaPose(bpy.types.Operator):
     
     def execute(self, context):
         arm = context.scene.anamnesis_armature.pose
+
+        # support for proper bone orientations: get diff from original
+        arm.bones['n_hara'].matrix_basis = Matrix()
+        # axis-angle form of the diff quaternion we want to pass to each individual bone operation. shorthand to pack into a float vector property; this seems silly?
+        aa = Quaternion([1,0,0,0]).rotation_difference(arm.bones['n_hara'].matrix.to_quaternion()).to_axis_angle()
+        diff = [aa[0][0], aa[0][1], aa[0][2], aa[1]]
+        print(diff)
+
         for bone in arm.bones:
-            bpy.ops.pose.load_ana_bone('EXEC_DEFAULT', bone=bone.name, path=self.filepath)
+            bpy.ops.pose.load_ana_bone('EXEC_DEFAULT', bone=bone.name, path=self.filepath, diff=diff)
         # rotate the whole thing to be upright, otherwise it can turn based on the transform of the armature object
         arm.bones['n_hara'].rotation_quaternion = Quaternion([1,0,0,0])
         return {'FINISHED'}
@@ -42,6 +50,7 @@ class LoadAnaBone(bpy.types.Operator):
     
     bone: bpy.props.StringProperty()
     path: bpy.props.StringProperty()
+    diff: bpy.props.FloatVectorProperty(size=4)
     
     def execute(self, context):
         arm = context.scene.anamnesis_armature.pose
@@ -71,8 +80,9 @@ class LoadAnaBone(bpy.types.Operator):
             rot = [float(x) for x in rot]
             # .pose is XYZW, we need to switch to WXYZ
             rot.insert(0, rot.pop())
-            rot = Quaternion(rot)
-
+            diff = Quaternion(self.diff[0:3], self.diff[3])
+            # print(diff)
+            rot = Quaternion(rot) @ diff
             # key blender function for transforming from the character's space to the bone's space relative to rest.
             bone.rotation_quaternion = context.scene.anamnesis_armature.convert_space(pose_bone = bone, matrix = rot.to_matrix().to_4x4(), from_space = 'POSE', to_space = 'LOCAL').to_quaternion()
         
